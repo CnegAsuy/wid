@@ -1,4 +1,4 @@
-use std::io::{Read, Write};
+use std::io::Read;
 use std::{process::Command, fs::File};
 use std::{thread, time};
 use chrono::Local;
@@ -34,22 +34,26 @@ fn control() {
     };
     println!("{:?}", processes);
     println!("Function executed at {:?}", time::SystemTime::now());
-    write_to_database(processes);
+    let _ = write_to_database(processes); 
 }
 
-fn write_to_database(strin: Vec<String>) {
+fn write_to_database(strin: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
 
     let mut file = File::open("db.json")?;
-    let json_data: Value = serde_json::to_value(&strin).unwrap();
-
-    println!("JSON Array: {}", json_data);
-
+    let mut readen_file = String::new();
+    file.read_to_string(&mut readen_file)?; 
+    let json_data: Value = serde_json::from_str(&readen_file)?;
+    
     let local_time = Local::now();
     let local_clock = local_time.format("%H %M %S");
-
+    
     let json_object = json!({
         "apps": strin,
         "time": local_clock.to_string(),
     });
     
+    println!("{:?}", json_data);
+    println!("{:?}", json_data.get("data"));
+
+    Ok(())
 }
