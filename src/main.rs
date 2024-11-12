@@ -1,4 +1,4 @@
-use std::io::Read;
+use std::io::{Read, Write};
 use std::{process::Command, fs::File};
 use std::{thread, time};
 use chrono::Local;
@@ -37,12 +37,12 @@ fn control() {
     let _ = write_to_database(processes); 
 }
 
-fn write_to_database(strin: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
 
+fn write_to_database(strin: Vec<String>) -> Result<(), Box<dyn std::error::Error>> {
     let mut file = File::open("db.json")?;
     let mut readen_file = String::new();
-    file.read_to_string(&mut readen_file)?; 
-    let json_data: Value = serde_json::from_str(&readen_file)?;
+    file.read_to_string(&mut readen_file)?;
+    let mut json_data: Value = serde_json::from_str(&readen_file)?;
     
     let local_time = Local::now();
     let local_clock = local_time.format("%H %M %S");
@@ -51,9 +51,26 @@ fn write_to_database(strin: Vec<String>) -> Result<(), Box<dyn std::error::Error
         "apps": strin,
         "time": local_clock.to_string(),
     });
+
+
+    let formatted_date = local_time.format("%Y-%m-%d").to_string();
+    println!("Formatted Date: {}", formatted_date);
+
+    if let Some(data) = json_data.get_mut(&formatted_date).and_then(|d| d.as_array_mut()) {
+        println!("Data found for {}: {:?}", formatted_date, data);
+        data.push(json_object.clone());
+    } else {
+        println!("No data found for {}. Creating new entry.", formatted_date);
+        json_data[formatted_date] = json!([json_object]);
+    }
     
+    let mut file = File::create("db.json")?;
+    file.write_all(json_data.to_string().as_bytes())?;
+
     println!("{:?}", json_data);
-    println!("{:?}", json_data.get("data"));
+    println!("{:?}", json_object);
+
+    json_data.get("index");
 
     Ok(())
 }
