@@ -1,8 +1,8 @@
 use std::io::{Read, Write};
-use std::{process::Command, fs::File};
-use std::{thread, time};
+use std::{fs::File, env, thread, time};
 use chrono::Local;
 use serde_json::{json, Value};
+use sysinfo::{ProcessExt, System, SystemExt, UserExt};
 
 fn main() {
     loop {
@@ -12,15 +12,40 @@ fn main() {
 }
 
 fn control() {
-    let status = Command::new("wmctrl")
-        .arg("-l")
-        .output()
-        .expect("Command failed to start");
 
-    let processes: Vec<String> = String::from_utf8_lossy(&status.stdout)
-        .lines()
-        .filter_map(|line| line.split_whitespace().skip(3).next().map(String::from))
-        .collect();
+    let mut system = System::new_all();
+    system.refresh_all();
+
+    let current_user_uid = system.users().iter()
+        .find(|user| user.name() == env::var("USER").unwrap_or_default())
+        .map(|user| user.id());
+
+    let common_app_paths = vec!["/usr/bin", "/usr/local/bin", "/opt"];
+
+    let system_daemons = vec!["systemd", "xwayland", "isolated web co", "pipewire-pulse", "wireplumber", "dbus-daemon", "sshd","hyprland", "kworker"];
+
+    let mut processes: Vec<String> = Vec::new();
+
+    if let Some(uid) = current_user_uid {
+        for (_pid, process) in system.processes() {
+            let process_name = process.name().to_lowercase();
+            let process_path = process.exe().to_string_lossy();
+            
+            if process.user_id() == Some(uid) &&
+            !system_daemons.contains(&process_name.as_str()) &&
+            common_app_paths.iter().any(|path| process_path.starts_with(path)) &&
+            process.cpu_usage() > 0.1
+            {
+                let process_name = process.name().to_lowercase();
+            if !processes.contains(&process_name) {
+                processes.push(process_name.clone());
+}
+
+            }
+        }
+    } else {
+        println!("Could not retrieve the current user's UID.");
+    }
     
     let _ = write_to_database(processes);
 }
