@@ -1,2 +1,4 @@
-/target
-/db.json
+/wid-cli/target
+/wid-gtk/target
+/wid-daemon/target
+/wid-daemon/db.json
