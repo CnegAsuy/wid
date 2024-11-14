@@ -1,8 +1,8 @@
-use std::io::{Read, Write};
-use std::{fs::File, env, thread, time};
+use std::io::{self, BufRead, Read, Write};
+use std::{fs::File, thread, time};
 use chrono::Local;
 use serde_json::{json, Value};
-use sysinfo::{ProcessExt, System, SystemExt, UserExt};
+use sysinfo::{ProcessExt, System, SystemExt};
 
 fn main() {
     loop {
@@ -15,38 +15,18 @@ fn control() {
 
     let mut system = System::new_all();
     system.refresh_all();
-
-    let current_user_uid = system.users().iter()
-        .find(|user| user.name() == env::var("USER").unwrap_or_default())
-        .map(|user| user.id());
-
-    let common_app_paths = vec!["/usr/bin", "/usr/local/bin", "/opt"];
-
-    let system_daemons = vec!["systemd", "xwayland", "isolated web co", "pipewire-pulse", "wireplumber", "dbus-daemon", "sshd","hyprland", "kworker"];
-
+    let apps: Vec<String> = apps_tracked();
     let mut processes: Vec<String> = Vec::new();
-
-    if let Some(uid) = current_user_uid {
         for (_pid, process) in system.processes() {
-            let process_name = process.name().to_lowercase();
-            let process_path = process.exe().to_string_lossy();
-            
-            if process.user_id() == Some(uid) &&
-            !system_daemons.contains(&process_name.as_str()) &&
-            common_app_paths.iter().any(|path| process_path.starts_with(path)) &&
-            process.cpu_usage() > 0.1
-            {
-                let process_name = process.name().to_lowercase();
-            if !processes.contains(&process_name) {
-                processes.push(process_name.clone());
-}
-
+            println!("{:?}", process.name());
+            if !processes.contains(&process.name()
+                .to_lowercase()
+                .trim()
+                .to_string()) &&
+                apps.contains(&process.name().to_lowercase().trim().to_string()) {
+                processes.push(process.name().to_lowercase().trim().to_string());
             }
         }
-    } else {
-        println!("Could not retrieve the current user's UID.");
-    }
-    
     let _ = write_to_database(processes);
 }
 
@@ -76,4 +56,20 @@ fn write_to_database(strin: Vec<String>) -> Result<(), Box<dyn std::error::Error
     file.write_all(json_data.to_string().as_bytes())?;
 
     Ok(())
+}
+
+fn apps_tracked() -> Vec<String> {
+    let file = File::open("track.txt").expect("Cannot find \"$USER/.cache/wid/track.txt\"");
+    let reader = io::BufReader::new(file);
+    let mut lines_vec: Vec<String> = Vec::new();
+    for line in reader.lines() {
+        lines_vec.push(line
+            .expect("Can't read the file \"$USER/.cache/wid/track.txt\"")
+            .to_lowercase()
+            .trim()
+            .to_string()
+        );
+    }
+
+    lines_vec
 }
