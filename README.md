@@ -6,11 +6,11 @@ Wid is a program that tracks your daily computer activities. It records the appl
 
 # Roadmap
 
-- [ ] wid-deamon
+- [x] wid-deamon (still developable)
   - [x] track the apps and write it on json file. (still developable)
-  - [ ] make all warnings.
+  - [x] make all warnings.
 - [ ] wid-cli
-  - [ ] make a visual screen (tui) with modern appearance.
+  - [x] make a visual screen (tui) with modern appearance.
   - [ ] visualize the datas.
   - [ ] a menu for let user choice the processes tracked.
 - [ ] wid-gtk
