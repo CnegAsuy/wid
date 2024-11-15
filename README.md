@@ -17,7 +17,34 @@ Wid is a program that tracks your daily computer activities. It records the appl
   - [ ] create a gtk app configable
   - [ ] visualize the datas.
   - [ ] a menu for let user choice the processes tracked.
-
+- [ ] create a wid-daemon.service.
+- [ ] prepare the setup.sh.
 # Installation
 
 > This project still in development.
+
+## Structure 
+```
+.
+├── README.md
+├── setup.sh
+├── wid-cli
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   └── src
+│       └── main.rs
+├── wid-daemon
+│   ├── Cargo.lock
+│   ├── Cargo.toml
+│   ├── db.json
+│   ├── src
+│   │   └── main.rs
+│   └── track.txt
+└── wid-gtk
+    ├── Cargo.lock
+    ├── Cargo.toml
+    └── src
+        └── main.rs
+
+7 directories, 13 files
+```
