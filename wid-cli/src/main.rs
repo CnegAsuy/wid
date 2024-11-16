@@ -25,6 +25,7 @@ fn main() -> crossterm::Result<()> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
     terminal.clear()?;
+    let mut x: u16 = 0;
     // Main event loop
     loop {
         // Check for user input
@@ -33,6 +34,9 @@ fn main() -> crossterm::Result<()> {
                 // Exit on Ctrl+C
                 if key_event.code == KeyCode::Char('c') && key_event.modifiers.contains(KeyModifiers::CONTROL) {
                     break;
+                }
+                if key_event.code == KeyCode::Char('h') {
+                    if x == 30 {x = 0} else {x = 30}
                 }
             }
         }
@@ -46,27 +50,70 @@ fn main() -> crossterm::Result<()> {
                 .constraints(
                     [
                         Constraint::Length(3),
-                        Constraint::Max(220),
+                        Constraint::Min(2),
                         Constraint::Length(8),
                     ]
                     .as_ref(),
                 )
                 .split(size);
 
-            let menu = Paragraph::new("Hello, World!")
+            let title = Paragraph::new("wid-cli")
                 .style(Style::default().fg(Color::LightCyan))
                 .alignment(Alignment::Center)
                 .block(
                     Block::default()
                         .borders(Borders::ALL)
                         .style(Style::default().fg(Color::White))
-                        .title("Menu")
+                        .border_type(BorderType::Plain),
+            );
+
+
+            let main = Layout::default()
+                .direction(Direction::Horizontal)
+                .margin(0)
+                .constraints(
+                    [
+                        Constraint::Percentage(100 - x),
+                        Constraint::Percentage(x),
+                    ]
+                    .as_ref()
+                )
+                .split(chunks[1]);
+
+            let p = Paragraph::new("Hello")
+                .style(Style::default().fg(Color::Green))
+                .alignment(Alignment::Left)
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .style(Style::default().fg(Color::White))
                         .border_type(BorderType::Plain),
                 );
 
-            rect.render_widget(menu.clone(), chunks[0]);
-            rect.render_widget(menu.clone(), chunks[1]);
-            rect.render_widget(menu.clone(), chunks[2]);
+            let h = Paragraph::new("Help Menu\n\n<Ctrl + c>: Exit Program\n<h> Help")
+                .style(Style::default().fg(Color::Green))
+                .alignment(Alignment::Left)
+                .block(
+                    Block::default()
+                        .borders(Borders::ALL)
+                        .style(Style::default().fg(Color::White))
+                        .border_type(BorderType::Plain),
+                );
+
+            let copyright = Paragraph::new("Copyright CnegAsuy")
+            .style(Style::default().fg(Color::LightCyan))
+            .alignment(Alignment::Center)
+            .block(
+                Block::default()
+                    .borders(Borders::ALL)
+                    .style(Style::default().fg(Color::White))
+                    .border_type(BorderType::Plain),
+        );
+
+            rect.render_widget(title, chunks[0]);
+            rect.render_widget(copyright, chunks[2]);
+            rect.render_widget(p, main[0]);
+            rect.render_widget(h, main[1]);
         })?;
     }
 
