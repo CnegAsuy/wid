@@ -10,7 +10,7 @@ Wid is a program that tracks your daily computer activities. It records the appl
   - [x] track the apps and write it on json file. (still developable)
   - [x] make all warnings.
 - [ ] wid-cli
-  - [x] make a visual screen (tui) with modern appearance.
+  - [ ] make a visual screen (tui) with modern appearance.
   - [ ] visualize the datas.
   - [ ] a menu for let user choice the processes tracked.
 - [ ] wid-gtk
