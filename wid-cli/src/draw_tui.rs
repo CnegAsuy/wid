@@ -2,7 +2,7 @@ use crate::widgets::centered_rect;
 use tui::{
     backend::CrosstermBackend, 
         layout::{Alignment, Constraint, Direction, Layout}, 
-        style::{Color, Style}, widgets::{Block, BorderType, Borders, Paragraph},
+        style::{Color, Style}, widgets::{Block, BorderType, Borders, List, ListItem, Paragraph},
         Terminal,
 };
 
@@ -11,6 +11,7 @@ use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> std::io::Result<()> {
     let mut show_menu = false;
     let mut x: u16 = 0;
+    let mut choice_at_menu: u8 = 0;
     // Main event loop
     Ok(loop {
         // Check for user input
@@ -25,6 +26,33 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                 }
                 if key_event.code == KeyCode::Esc {
                     show_menu = !show_menu;
+                }
+
+                if show_menu {
+                    if key_event.code == KeyCode::Up {
+                        if  choice_at_menu != 0 {
+                            choice_at_menu -= 1;
+                        } else {
+                            choice_at_menu = 4
+                        }
+                    }
+
+                    if key_event.code == KeyCode::Down {
+                        if choice_at_menu == 4 {
+                            choice_at_menu = 0;
+                        } else {
+                            choice_at_menu += 1;
+                        }
+                    }
+
+                    if key_event.code == KeyCode::Enter {
+                        match choice_at_menu {
+                            4_u8 => {
+                                break;
+                            },
+                            _ => {}
+                        }
+                    }
                 }
             }
         }
@@ -54,7 +82,7 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                     Block::default()
                         .borders(Borders::ALL)
                         .style(Style::default().fg(Color::White))
-                        .border_type(BorderType::Plain),
+                        .border_type(BorderType::Rounded),
             );
 
 
@@ -77,7 +105,7 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                     Block::default()
                         .borders(Borders::ALL)
                         .style(Style::default().fg(Color::White))
-                        .border_type(BorderType::Plain),
+                        .border_type(BorderType::Rounded),
                 );
 
             let h = Paragraph::new("Help Menu\n\n<q>: Exit Program\n<h>: Close help menu")
@@ -87,17 +115,17 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                     Block::default()
                         .borders(Borders::ALL)
                         .style(Style::default().fg(Color::White))
-                        .border_type(BorderType::Plain),
+                        .border_type(BorderType::Rounded),
                 );
 
-            let copyright = Paragraph::new("All Right Reserved © CnegAsuy\n\n Press <h> to help.")
+            let copyright = Paragraph::new("MIT Licence\n\nPress <h> to help.")
             .style(Style::default().fg(Color::LightCyan))
             .alignment(Alignment::Center)
             .block(
                 Block::default()
                     .borders(Borders::ALL)
                     .style(Style::default().fg(Color::White))
-                    .border_type(BorderType::Plain),
+                    .border_type(BorderType::Rounded),
         );
 
             rect.render_widget(title, chunks[0]);
@@ -108,17 +136,32 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
             if show_menu {
                 // Create a centered rect for the menu
                 let menu_rect = centered_rect(50, 45, size);
-    
+                let menu_items = Vec::from(vec![
+                    ListItem::new("
+                |   |   |  o     |  
+                |   |   |      __|  
+                |   |   |  |  /  |  
+                 \\_/ \\_/   |_/\\_/|_/
+                ")
+                    .style(Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))),
+                    ListItem::new("    Add an app that track")
+                    .style(if choice_at_menu == 0 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
+                    ListItem::new("    My Usage")
+                    .style(if choice_at_menu == 1 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
+                    ListItem::new("    Add an app that track")
+                    .style(if choice_at_menu == 2 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
+                    ListItem::new("    Settings")
+                    .style(if choice_at_menu == 3 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
+                    ListItem::new("    Exit")
+                    .style(if choice_at_menu == 4 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
+                ]);
                 // Menu widget
-                let menu = Paragraph::new("Menu\n[1] Option 1\n[2] Option 2\n[Esc] Close")
+                let menu = List::new(menu_items)
                     .block(
                         Block::default()
-                            .title("Menu")
-                            .borders(Borders::ALL)
-                            .style(Style::default().fg(Color::Rgb(132, 172, 224))),
+                            .style(Style::default().fg(Color::Rgb(132, 172, 254))),
                     )
-                    .style(Style::default().fg(Color::White))
-                    .alignment(Alignment::Center);
+                    .style(Style::default().fg(Color::White));
     
                 rect.render_widget(menu, menu_rect);
             }

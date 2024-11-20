@@ -6,7 +6,7 @@ pub(crate) fn centered_rect(percent_x: u16, percent_y: u16, rect: Rect) -> Rect 
         .constraints(
             [
                 Constraint::Percentage((100 - percent_y) / 2), // Top padding
-                Constraint::Percentage(percent_y),            // Menu height
+                Constraint::Length(14) ,          // Menu height
                 Constraint::Percentage((100 - percent_y) / 2), // Bottom padding
             ]
             .as_ref(),
