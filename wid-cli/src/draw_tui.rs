@@ -135,36 +135,40 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
 
             if show_menu {
                 // Create a centered rect for the menu
-                let menu_rect = centered_rect(50, 45, size);
+                let menu_rect = centered_rect(50, size);
                 let menu_items = Vec::from(vec![
-                    ListItem::new("
-                |   |   |  o     |  
-                |   |   |      __|  
-                |   |   |  |  /  |  
-                 \\_/ \\_/   |_/\\_/|_/
-                ")
+                    ListItem::new("                                                                 
+                |   |   |  o     |                                        
+                |   |   |      __|                                      
+                |   |   |  |  /  |                                     
+                 \\_/ \\_/   |_/\\_/|_/                                     
+                                               ")
                     .style(Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))),
-                    ListItem::new("    Add an app that track")
+                    ListItem::new("    Add an app that track                          ")
                     .style(if choice_at_menu == 0 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                    ListItem::new("    My Usage")
+                    ListItem::new("    My Usage                                       ")
                     .style(if choice_at_menu == 1 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                    ListItem::new("    Add an app that track")
+                    ListItem::new("    Add an app that track                          ")
                     .style(if choice_at_menu == 2 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                    ListItem::new("    Settings")
+                    ListItem::new("    Settings                                       ")
                     .style(if choice_at_menu == 3 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                    ListItem::new("    Exit")
+                    ListItem::new("    Exit                                           ")
                     .style(if choice_at_menu == 4 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                ]);
+                    ListItem::new("                                                   ")
+                    .style(Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))),
+                    ]);
                 // Menu widget
                 let menu = List::new(menu_items)
                     .block(
                         Block::default()
                             .style(Style::default().fg(Color::Rgb(132, 172, 254))),
                     )
-                    .style(Style::default().fg(Color::White));
+                    .style(Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64)));
+    
     
                 rect.render_widget(menu, menu_rect);
             }
         })?;
+        
     })
 }
