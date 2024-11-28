@@ -1,10 +1,11 @@
-use crate::widgets::centered_rect;
+use crate::{db_reader ,widgets::centered_rect};
 use tui::{
     backend::CrosstermBackend, 
         layout::{Alignment, Constraint, Direction, Layout}, 
         style::{Color, Style}, widgets::{Block, BorderType, Borders, List, ListItem, Paragraph},
         Terminal,
 };
+
 
 use crossterm::event::{self, Event, KeyCode, KeyModifiers};
 
@@ -29,31 +30,22 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                 }
 
                 if show_menu {
-                    if key_event.code == KeyCode::Up {
-                        if  choice_at_menu != 0 {
-                            choice_at_menu -= 1;
-                        } else {
-                            choice_at_menu = 4
-                        }
-                    }
-
-                    if key_event.code == KeyCode::Down {
-                        if choice_at_menu == 4 {
-                            choice_at_menu = 0;
-                        } else {
-                            choice_at_menu += 1;
-                        }
-                    }
-
-                    if key_event.code == KeyCode::Enter {
-                        match choice_at_menu {
-                            4_u8 => {
-                                break;
-                            },
-                            _ => {}
-                        }
+            match key_event.code {
+                KeyCode::Up => {
+                    choice_at_menu = (choice_at_menu + 4) % 5;
+                }
+                KeyCode::Down => {
+                    choice_at_menu = (choice_at_menu + 1) % 5;
+                }
+                KeyCode::Enter => {
+                    match choice_at_menu {
+                        4 => break, // Exit program
+                        _ => {},
                     }
                 }
+                _ => {}
+            }
+        }
             }
         }
 
@@ -98,7 +90,7 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                 )
                 .split(chunks[1]);
 
-            let p = Paragraph::new("Hello")
+            let p = Paragraph::new(format!("Today \n"))
                 .style(Style::default().fg(Color::Green))
                 .alignment(Alignment::Left)
                 .block(

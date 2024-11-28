@@ -9,16 +9,26 @@ Wid is a program that tracks your daily computer activities. It records the appl
 - [x] wid-deamon (still developable)
   - [x] track the apps and write it on json file. (still developable)
   - [x] make all warnings.
+  - [ ] delete the data after 2 month
+  - [ ] encrypt the data
+  - [ ] make a systemd-service
 - [ ] wid-cli
-  - [ ] make a visual screen (tui) with modern appearance.
+  - [x] make a visual screen (tui) with modern appearance. (still developable)
+  - [ ] decrypt system
   - [ ] visualize the datas.
   - [ ] a menu for let user choice the processes tracked.
 - [ ] wid-gtk
   - [ ] create a gtk app configable
   - [ ] visualize the datas.
   - [ ] a menu for let user choice the processes tracked.
-- [ ] create a wid-daemon.service.
-- [ ] prepare the setup.sh.
+- [ ] setup-sh
+  - [ ] check the dependencies
+  - [ ] compile the cargo projects
+  - [ ] move the binary files to /usr/bin/
+  - [ ] create a struct like ~/.cache/wid/{db.json, track.txt} ~/.config/.config/wid/config.jsonc
+  - [ ] move the systemd-service to /etc/systemd
+  - [ ] start and enable the deamon
+  - [ ] start wid-cli
 # Installation
 
 > This project still in development.
@@ -26,25 +36,28 @@ Wid is a program that tracks your daily computer activities. It records the appl
 ## Structure 
 ```
 .
+├── LICENSE
 ├── README.md
 ├── setup.sh
 ├── wid-cli
 │   ├── Cargo.lock
 │   ├── Cargo.toml
 │   └── src
-│       └── main.rs
+│       ├── controller.rs
+│       ├── db_reader.rs
+│       ├── draw_tui.rs
+│       ├── main.rs
+│       └── widgets.rs
 ├── wid-daemon
 │   ├── Cargo.lock
 │   ├── Cargo.toml
-│   ├── db.json
-│   ├── src
-│   │   └── main.rs
-│   └── track.txt
+│   └── src
+│       └── main.rs
 └── wid-gtk
     ├── Cargo.lock
     ├── Cargo.toml
     └── src
         └── main.rs
 
-7 directories, 13 files
+7 directories, 17 files
 ```

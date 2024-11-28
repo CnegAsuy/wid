@@ -12,8 +12,10 @@ use crossterm::{
 
 mod draw_tui;
 mod widgets;
-
+mod db_reader;
+mod controller;
 use draw_tui::draw_tui;
+
 
 fn main() -> crossterm::Result<()> {
     // Enable raw mode and hide the cursor
