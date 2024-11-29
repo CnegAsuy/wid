@@ -1,0 +1,6 @@
+[workspace]
+members = [
+	"wid-daemon",
+	"wid-cli",
+	"wid-gtk",
+]

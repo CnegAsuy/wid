@@ -1,4 +1,4 @@
-use crate::{db_reader ,widgets::centered_rect};
+use crate::{controller::{value_to_graph_horizontally, value_to_graph_vertically}, widgets::centered_rect};
 use tui::{
     backend::CrosstermBackend, 
         layout::{Alignment, Constraint, Direction, Layout}, 
@@ -77,7 +77,6 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                         .border_type(BorderType::Rounded),
             );
 
-
             let main = Layout::default()
                 .direction(Direction::Horizontal)
                 .margin(0)
@@ -90,15 +89,24 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                 )
                 .split(chunks[1]);
 
-            let p = Paragraph::new(format!("Today \n"))
-                .style(Style::default().fg(Color::Green))
-                .alignment(Alignment::Left)
+            let nums: Vec<u8> = vec![12,14,110,24,13,75,24,64,22,6];
+
+            let p = ListItem::new(format!("{}", value_to_graph_horizontally(nums.clone())))
+                .style(Style::default().fg(Color::Green));
+
+            let c = ListItem::new(format!("\n{}\n", value_to_graph_vertically(nums.clone())))
+                .style(Style::default().fg(Color::Green).bg(Color::DarkGray));
+
+            let v_main_l = vec![p,c];
+                
+            let main_l = List::new(v_main_l)
+                .style(Style::default())
                 .block(
                     Block::default()
                         .borders(Borders::ALL)
                         .style(Style::default().fg(Color::White))
                         .border_type(BorderType::Rounded),
-                );
+            );
 
             let h = Paragraph::new("Help Menu\n\n<q>: Exit Program\n<h>: Close help menu")
                 .style(Style::default().fg(Color::Green))
@@ -122,11 +130,11 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
 
             rect.render_widget(title, chunks[0]);
             rect.render_widget(copyright, chunks[2]);
-            rect.render_widget(p, main[0]);
+            rect.render_widget(main_l, main[0]);
             rect.render_widget(h, main[1]);
 
             if show_menu {
-                // Create a centered rect for the menu
+            // Create a centered rect for the menu
                 let menu_rect = centered_rect(50, size);
                 let menu_items = Vec::from(vec![
                     ListItem::new("                                                                 
@@ -140,7 +148,7 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                     .style(if choice_at_menu == 0 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
                     ListItem::new("    My Usage                                       ")
                     .style(if choice_at_menu == 1 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
-                    ListItem::new("    Add an app that track                          ")
+                    ListItem::new("    My Github Page                                 ")
                     .style(if choice_at_menu == 2 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
                     ListItem::new("    Settings                                       ")
                     .style(if choice_at_menu == 3 {Style::default().fg(Color::Black).bg(Color::White)} else {Style::default().fg(Color::White).bg(Color::Rgb(64, 64, 64))}),
