@@ -30,7 +30,7 @@ Wid is a program that tracks your daily computer activities. It records the appl
 
 ## Structure 
 ```
-.
+wid
 ├── Cargo.lock
 ├── Cargo.toml
 ├── LICENSE
@@ -48,15 +48,14 @@ Wid is a program that tracks your daily computer activities. It records the appl
 ├── wid-daemon
 │   ├── Cargo.lock
 │   ├── Cargo.toml
-│   ├── db.json
-│   ├── src
-│   │   └── main.rs
-│   └── track.txt
+│   └── src
+│       └── main.rs
+├── wid-daemon.service
 └── wid-gtk
     ├── Cargo.lock
     ├── Cargo.toml
     └── src
         └── main.rs
 
-7 directories, 20 files
+7 directories, 22 files
 ```
