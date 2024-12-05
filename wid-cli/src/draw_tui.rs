@@ -1,4 +1,4 @@
-use crate::{controller::{value_to_graph_horizontally, value_to_graph_vertically}, widgets::centered_rect};
+use crate::{controller::{value_to_graph_horizontally, value_to_graph_vertically}, db_reader::{analyze_to_v, from_date}, widgets::centered_rect};
 use tui::{
     backend::CrosstermBackend, 
         layout::{Alignment, Constraint, Direction, Layout}, 
@@ -61,7 +61,7 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                     [
                         Constraint::Length(3),
                         Constraint::Min(2),
-                        Constraint::Length(6),
+                        Constraint::Length(5),
                     ]
                     .as_ref(),
                 )
@@ -89,15 +89,26 @@ pub fn draw_tui(terminal: &mut Terminal<CrosstermBackend<std::io::Stdout>>) -> s
                 )
                 .split(chunks[1]);
 
-            let nums: Vec<u8> = vec![12,14,110,24,13,75,24,64,22,6];
+            let _nums: Vec<(String, u8)> = vec![
+                ("names".to_string(), 12),
+                ("namse".to_string(), 23),
+                ("name".to_string(), 55),
+                ("name".to_string(), 15),
+                ("namewds".to_string(), 57),
+                ("name".to_string(), 23),
+                ("namesdfsgsg".to_string(), 94),
+                ("name".to_string(), 24),
+            ];
 
-            let p = ListItem::new(format!("{}", value_to_graph_horizontally(nums.clone())))
+            let val = from_date("2024-11-30", "db.json");
+            let v2 = analyze_to_v(val);
+            
+
+            let p = ListItem::new(format!("{}", value_to_graph_horizontally(v2)))
                 .style(Style::default().fg(Color::Green));
 
-            let c = ListItem::new(format!("\n{}\n", value_to_graph_vertically(nums.clone())))
-                .style(Style::default().fg(Color::Green).bg(Color::DarkGray));
 
-            let v_main_l = vec![p,c];
+            let v_main_l = vec![p];
                 
             let main_l = List::new(v_main_l)
                 .style(Style::default())

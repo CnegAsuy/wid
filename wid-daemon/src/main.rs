@@ -20,7 +20,6 @@ fn control() {
     let mut processes: Vec<String> = Vec::new();
     // Select the project that i want.
     for (_pid, process) in system.processes() {
-        println!("{:?}", process.name());
         if !processes.contains(&process.name()
             .to_lowercase()
             .trim()
