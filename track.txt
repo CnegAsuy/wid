@@ -1,0 +1,10 @@
+// Write the applications binary names as you can remember
+code
+discord
+kitty
+vesktop
+zed-editor
+firefox
+krita
+blender
+filezilla
